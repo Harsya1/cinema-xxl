@@ -2,15 +2,26 @@
 
 namespace App\Models;
 
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+
+    /**
+     * Default attribute values.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'role' => 'user',
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -130,5 +141,15 @@ class User extends Authenticatable
     public function isStaff(): bool
     {
         return in_array($this->role, ['admin', 'manager', 'cashier', 'fnb_staff', 'cleaner']);
+    }
+
+    /**
+     * Determine if the user can access the Filament admin panel.
+     * Only staff members (non-user roles) can access admin panel.
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Only non-user roles can access admin panel
+        return $this->role !== 'user';
     }
 }

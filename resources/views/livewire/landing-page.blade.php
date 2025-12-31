@@ -73,10 +73,10 @@
     @endif
 
     {{-- Now Playing Section --}}
-    <section class="py-16 px-4 md:px-8 lg:px-16">
+    <section id="now-playing" class="py-28 px-4 md:px-8 lg:px-16 scroll-mt-28">
         <div class="container mx-auto">
             {{-- Section Header --}}
-            <div class="flex items-center justify-between mb-10">
+            <div class="flex items-center justify-between mb-15 md:mb-20">
                 <div>
                     <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">Now Playing</h2>
                     <p class="text-gray-400">Discover movies currently in theaters</p>

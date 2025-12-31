@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -86,7 +87,11 @@ class UserResource extends Resource
                     ->counts('bookings')
                     ->badge()
                     ->color('info')
-                    ->visible(fn () => auth()->user()?->isAdmin()),
+                    ->visible(function (): bool {
+                        /** @var User|null $user */
+                        $user = Auth::user();
+                        return $user !== null && $user->isAdmin();
+                    }),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Joined')
