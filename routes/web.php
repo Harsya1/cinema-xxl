@@ -2,6 +2,7 @@
 
 use App\Livewire\LandingPage;
 use App\Livewire\ComingSoon;
+use App\Livewire\MovieDetails;
 use App\Livewire\UserProfile;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 // Public Pages
 Route::get('/', LandingPage::class)->name('home');
 Route::get('/coming-soon', ComingSoon::class)->name('coming-soon');
+Route::get('/movie/{id}', MovieDetails::class)->name('movie.details');
 
 // Guest Auth Routes (Public Users Only)
 Route::middleware('guest')->group(function () {
