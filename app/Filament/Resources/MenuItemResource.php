@@ -87,7 +87,8 @@ class MenuItemResource extends Resource
 
                 Tables\Columns\TextColumn::make('category')
                     ->badge()
-                    ->color(fn (MenuCategory $state): string => $state->color()),
+                    ->formatStateUsing(fn ($state) => $state instanceof MenuCategory ? $state->label() : $state)
+                    ->color(fn ($state): string => $state instanceof MenuCategory ? $state->color() : 'gray'),
 
                 Tables\Columns\TextColumn::make('price')
                     ->money('IDR')
@@ -103,9 +104,9 @@ class MenuItemResource extends Resource
                     ->badge()
                     ->color('gray'),
 
-                Tables\Columns\TextColumn::make('fnb_order_details_count')
+                Tables\Columns\TextColumn::make('order_details_count')
                     ->label('Times Ordered')
-                    ->counts('fnbOrderDetails')
+                    ->counts('orderDetails')
                     ->badge()
                     ->color('success'),
 

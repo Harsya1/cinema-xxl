@@ -73,7 +73,8 @@ class InventoryItemResource extends Resource
 
                 Tables\Columns\TextColumn::make('type')
                     ->badge()
-                    ->color(fn (InventoryType $state): string => $state->color()),
+                    ->formatStateUsing(fn ($state) => $state instanceof InventoryType ? $state->label() : ucfirst($state))
+                    ->color(fn ($state): string => $state instanceof InventoryType ? $state->color() : 'gray'),
 
                 Tables\Columns\TextColumn::make('stock_quantity')
                     ->label('Stock')

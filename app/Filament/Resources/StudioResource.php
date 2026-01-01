@@ -104,7 +104,8 @@ class StudioResource extends Resource
 
                 Tables\Columns\TextColumn::make('type')
                     ->badge()
-                    ->color(fn (StudioType $state): string => $state->color()),
+                    ->formatStateUsing(fn ($state) => $state instanceof StudioType ? $state->label() : $state)
+                    ->color(fn ($state): string => $state instanceof StudioType ? $state->color() : 'gray'),
 
                 Tables\Columns\TextColumn::make('capacity')
                     ->label('Capacity')

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StudioType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,6 +15,10 @@ class Studio extends Model
         'name',
         'type',
         'total_seats',
+    ];
+
+    protected $casts = [
+        'type' => StudioType::class,
     ];
 
     // ==================== RELATIONSHIPS ====================

@@ -103,7 +103,7 @@
             @else
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
                 @foreach($movies as $movie)
-                <div class="group cursor-pointer">
+                <a href="{{ route('movie.details', $movie['id']) }}" class="group cursor-pointer">
                     {{-- Movie Card --}}
                     <div class="relative overflow-hidden rounded-xl bg-gray-800 aspect-[2/3] shadow-lg">
                         {{-- Poster Image --}}
@@ -133,7 +133,7 @@
                         </div>
 
                         {{-- Watchlist Button --}}
-                        <div class="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" onclick="event.preventDefault(); event.stopPropagation();">
                             <livewire:watchlist-button 
                                 :tmdb-id="$movie['id']"
                                 :title="$movie['title']"
@@ -165,7 +165,7 @@
                         </p>
                         @endif
                     </div>
-                </div>
+                </a>
                 @endforeach
             </div>
             @endif
