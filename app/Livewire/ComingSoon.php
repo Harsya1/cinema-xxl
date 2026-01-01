@@ -57,6 +57,7 @@ class ComingSoon extends Component
             'poster_path' => $movie['poster_path'] 
                 ? $this->posterBaseUrl . $movie['poster_path'] 
                 : null,
+            'poster_path_raw' => $movie['poster_path'] ?? null,
             'vote_average' => round($movie['vote_average'] ?? 0, 1),
             'release_date' => $movie['release_date'] ?? null,
         ];

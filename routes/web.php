@@ -2,6 +2,7 @@
 
 use App\Livewire\LandingPage;
 use App\Livewire\ComingSoon;
+use App\Livewire\UserProfile;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Auth\ForgotPassword;
@@ -23,6 +24,9 @@ Route::middleware('guest')->group(function () {
 
 // Authenticated Routes
 Route::middleware('auth')->group(function () {
+    // User Profile
+    Route::get('/profile', UserProfile::class)->name('profile');
+    
     Route::post('/logout', function () {
         Auth::guard('web')->logout();
         request()->session()->invalidate();

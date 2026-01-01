@@ -132,6 +132,19 @@
                             </div>
                         </div>
 
+                        {{-- Watchlist Button --}}
+                        <div class="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <livewire:watchlist-button 
+                                :tmdb-id="$movie['id']"
+                                :title="$movie['title']"
+                                :poster-path="$movie['poster_path_raw'] ?? null"
+                                :overview="$movie['overview']"
+                                :vote-average="$movie['vote_average']"
+                                :release-date="$movie['release_date']"
+                                :wire:key="'watchlist-'.$movie['id']"
+                            />
+                        </div>
+
                         {{-- Rating Badge (Always Visible) --}}
                         <div class="absolute top-3 right-3 bg-gray-900/80 backdrop-blur-sm px-2 py-1 rounded-md flex items-center gap-1">
                             <svg class="w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20">

@@ -35,6 +35,7 @@ class User extends Authenticatable implements FilamentUser
         'phone_number',
         'date_of_birth',
         'role',
+        'points',
     ];
 
     /**
@@ -111,6 +112,14 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(FnbOrder::class, 'user_id');
     }
 
+    /**
+     * Get user's watchlist items.
+     */
+    public function watchlists(): HasMany
+    {
+        return $this->hasMany(Watchlist::class);
+    }
+
     // ==================== ROLE HELPERS ====================
 
     public function isAdmin(): bool
@@ -151,5 +160,43 @@ class User extends Authenticatable implements FilamentUser
     {
         // Only non-user roles can access admin panel
         return $this->role !== 'user';
+    }
+
+    // ==================== POINTS HELPERS ====================
+
+    /**
+     * Add points to the user's account.
+     */
+    public function addPoints(int $points): void
+    {
+        $this->increment('points', $points);
+    }
+
+    /**
+     * Deduct points from the user's account.
+     */
+    public function deductPoints(int $points): bool
+    {
+        if ($this->points >= $points) {
+            $this->decrement('points', $points);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Get formatted points display.
+     */
+    public function getFormattedPointsAttribute(): string
+    {
+        return number_format($this->points) . ' Points';
+    }
+
+    /**
+     * Check if movie is in user's watchlist.
+     */
+    public function hasInWatchlist(int $tmdbId): bool
+    {
+        return $this->watchlists()->where('tmdb_id', $tmdbId)->exists();
     }
 }

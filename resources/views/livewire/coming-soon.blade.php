@@ -80,6 +80,19 @@
                             </div>
                         </div>
 
+                        {{-- Watchlist Button --}}
+                        <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+                            <livewire:watchlist-button 
+                                :tmdb-id="$movie['id']"
+                                :title="$movie['title']"
+                                :poster-path="$movie['poster_path_raw'] ?? null"
+                                :overview="$movie['overview']"
+                                :vote-average="$movie['vote_average']"
+                                :release-date="$movie['release_date']"
+                                :wire:key="'watchlist-cs-'.$movie['id']"
+                            />
+                        </div>
+
                         {{-- Release Date Badge (Always Visible) --}}
                         @if($movie['release_date'])
                         <div class="absolute top-3 right-3 bg-amber-500 px-2 py-1 rounded-md">

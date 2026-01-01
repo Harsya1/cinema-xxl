@@ -65,6 +65,7 @@ class LandingPage extends Component
             'poster_path' => $movie['poster_path'] 
                 ? $this->posterBaseUrl . $movie['poster_path'] 
                 : null,
+            'poster_path_raw' => $movie['poster_path'] ?? null,
             'backdrop_path' => $movie['backdrop_path'] 
                 ? ($isHero ? $this->backdropBaseUrl : $this->posterBaseUrl) . $movie['backdrop_path'] 
                 : null,
