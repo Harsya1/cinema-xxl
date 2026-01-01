@@ -2,10 +2,12 @@
 
 namespace App\Providers\Filament;
 
+use App\Models\User;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -27,6 +29,8 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->authGuard('web')
+            ->authPasswordBroker('users')
             ->colors([
                 'primary' => Color::Amber,
                 'danger' => Color::Rose,
@@ -41,8 +45,15 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 'Cinema Operations',
                 'Food & Beverage',
-                'Reports',
-                'User Management',
+                'POS System',
+                'Administration',
+            ])
+            ->navigationItems([
+                NavigationItem::make('FnB POS')
+                    ->url('/pos/fnb', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-shopping-cart')
+                    ->group('POS System')
+                    ->sort(1),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

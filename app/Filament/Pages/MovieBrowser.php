@@ -100,7 +100,7 @@ class MovieBrowser extends Page implements HasForms
         $this->selectedMovie = null;
     }
 
-    public function createShowtime(int $tmdbId, string $title, ?string $posterPath): \Livewire\Features\SupportRedirects\Redirector
+    public function createShowtime(int $tmdbId, string $title, ?string $posterPath): \Illuminate\Http\RedirectResponse
     {
         // Redirect to showtime creation with movie data
         return redirect()->route('filament.admin.resources.showtimes.create', [

@@ -73,10 +73,10 @@
     @endif
 
     {{-- Now Playing Section --}}
-    <section class="py-16 px-4 md:px-8 lg:px-16">
+    <section id="now-playing" class="py-28 px-4 md:px-8 lg:px-16 scroll-mt-28">
         <div class="container mx-auto">
             {{-- Section Header --}}
-            <div class="flex items-center justify-between mb-10">
+            <div class="flex items-center justify-between mb-15 md:mb-20">
                 <div>
                     <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">Now Playing</h2>
                     <p class="text-gray-400">Discover movies currently in theaters</p>
@@ -103,7 +103,7 @@
             @else
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
                 @foreach($movies as $movie)
-                <div class="group cursor-pointer">
+                <a href="{{ route('movie.details', $movie['id']) }}" class="group cursor-pointer">
                     {{-- Movie Card --}}
                     <div class="relative overflow-hidden rounded-xl bg-gray-800 aspect-[2/3] shadow-lg">
                         {{-- Poster Image --}}
@@ -132,6 +132,19 @@
                             </div>
                         </div>
 
+                        {{-- Watchlist Button --}}
+                        <div class="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" onclick="event.preventDefault(); event.stopPropagation();">
+                            <livewire:watchlist-button 
+                                :tmdb-id="$movie['id']"
+                                :title="$movie['title']"
+                                :poster-path="$movie['poster_path_raw'] ?? null"
+                                :overview="$movie['overview']"
+                                :vote-average="$movie['vote_average']"
+                                :release-date="$movie['release_date']"
+                                :wire:key="'watchlist-'.$movie['id']"
+                            />
+                        </div>
+
                         {{-- Rating Badge (Always Visible) --}}
                         <div class="absolute top-3 right-3 bg-gray-900/80 backdrop-blur-sm px-2 py-1 rounded-md flex items-center gap-1">
                             <svg class="w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
@@ -152,7 +165,7 @@
                         </p>
                         @endif
                     </div>
-                </div>
+                </a>
                 @endforeach
             </div>
             @endif

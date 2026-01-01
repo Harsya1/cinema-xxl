@@ -65,10 +65,12 @@ class FnbOrderResource extends Resource
                                     ->searchable()
                                     ->preload()
                                     ->live()
-                                    ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
                                         if ($state) {
                                             $menuItem = MenuItem::find($state);
-                                            $set('unit_price', $menuItem?->price ?? 0);
+                                            $price = $menuItem?->price ?? 0;
+                                            $qty = (int) $get('quantity') ?: 1;
+                                            $set('subtotal', $price * $qty);
                                         }
                                     }),
 
@@ -76,22 +78,36 @@ class FnbOrderResource extends Resource
                                     ->numeric()
                                     ->required()
                                     ->default(1)
-                                    ->minValue(1),
+                                    ->minValue(1)
+                                    ->live()
+                                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
+                                        $menuItemId = $get('menu_item_id');
+                                        if ($menuItemId) {
+                                            $menuItem = MenuItem::find($menuItemId);
+                                            $price = $menuItem?->price ?? 0;
+                                            $qty = (int) $state ?: 1;
+                                            $set('subtotal', $price * $qty);
+                                        }
+                                    }),
 
-                                Forms\Components\TextInput::make('unit_price')
+                                Forms\Components\Placeholder::make('unit_price_display')
                                     ->label('Unit Price')
+                                    ->content(function (Forms\Get $get) {
+                                        $menuItemId = $get('menu_item_id');
+                                        if ($menuItemId) {
+                                            $menuItem = MenuItem::find($menuItemId);
+                                            return 'Rp ' . number_format($menuItem?->price ?? 0, 0, ',', '.');
+                                        }
+                                        return 'Rp 0';
+                                    }),
+
+                                Forms\Components\TextInput::make('subtotal')
+                                    ->label('Subtotal')
                                     ->numeric()
                                     ->prefix('Rp')
                                     ->disabled()
-                                    ->dehydrated(true),
-
-                                Forms\Components\Placeholder::make('subtotal')
-                                    ->label('Subtotal')
-                                    ->content(function (Forms\Get $get) {
-                                        $qty = (int) $get('quantity') ?: 1;
-                                        $price = (float) $get('unit_price') ?: 0;
-                                        return 'Rp ' . number_format($qty * $price, 0, ',', '.');
-                                    }),
+                                    ->dehydrated(true)
+                                    ->default(0),
                             ])
                             ->columns(4)
                             ->itemLabel(fn (array $state): ?string => MenuItem::find($state['menu_item_id'] ?? null)?->name ?? 'New Item')
