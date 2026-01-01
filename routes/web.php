@@ -8,6 +8,7 @@ use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\ResetPassword;
+use App\Livewire\Pos\FnbPos;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -35,4 +36,9 @@ Route::middleware('auth')->group(function () {
         request()->session()->regenerateToken();
         return redirect('/');
     })->name('logout');
+});
+
+// POS Routes (Staff Only)
+Route::middleware(['auth', 'role:fnb_staff,cashier'])->prefix('pos')->group(function () {
+    Route::get('/fnb', FnbPos::class)->name('pos.fnb');
 });

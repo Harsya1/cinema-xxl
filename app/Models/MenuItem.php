@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\MenuCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,6 +25,7 @@ class MenuItem extends Model
         return [
             'price' => 'decimal:2',
             'is_available' => 'boolean',
+            'category' => MenuCategory::class,
         ];
     }
 

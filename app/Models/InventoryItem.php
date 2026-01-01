@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\InventoryType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,6 +23,7 @@ class InventoryItem extends Model
     {
         return [
             'stock_quantity' => 'decimal:2',
+            'type' => InventoryType::class,
         ];
     }
 
