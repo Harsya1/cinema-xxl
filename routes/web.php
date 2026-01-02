@@ -3,6 +3,7 @@
 use App\Livewire\LandingPage;
 use App\Livewire\ComingSoon;
 use App\Livewire\MovieDetails;
+use App\Livewire\BookingComponent;
 use App\Livewire\UserProfile;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
@@ -16,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', LandingPage::class)->name('home');
 Route::get('/coming-soon', ComingSoon::class)->name('coming-soon');
 Route::get('/movie/{id}', MovieDetails::class)->name('movie.details');
+
+// Booking Route (Public but requires auth to book)
+Route::get('/booking/{showtime_id}', BookingComponent::class)->name('booking');
 
 // Guest Auth Routes (Public Users Only)
 Route::middleware('guest')->group(function () {

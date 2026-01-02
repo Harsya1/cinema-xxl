@@ -228,14 +228,28 @@
                     {{-- Time Slots --}}
                     <div class="flex flex-wrap gap-3">
                         @foreach($times as $showtime)
+                        @php
+                            // Use isPast() which respects app timezone
+                            $isPast = $showtime->start_time->isPast();
+                        @endphp
+                        @if($isPast)
+                        {{-- DISABLED: No href, no click action --}}
+                        <div class="flex flex-col items-center px-4 py-3 bg-gray-900/30 rounded-lg border border-gray-800 opacity-50 cursor-not-allowed select-none" title="This showtime has passed">
+                            <span class="text-gray-500 font-bold line-through">{{ $showtime->start_time->format('H:i') }}</span>
+                            <span class="text-gray-600 text-xs">{{ $showtime->studio->name }}</span>
+                            <span class="text-gray-600 text-xs font-medium mt-1">Passed</span>
+                        </div>
+                        @else
+                        {{-- ACTIVE: Clickable link to booking --}}
                         <a 
-                            href="#" 
+                            href="{{ route('booking', $showtime->id) }}" 
                             class="group flex flex-col items-center px-4 py-3 bg-gray-900/50 hover:bg-amber-500 rounded-lg border border-gray-700 hover:border-amber-500 transition-all duration-300"
                         >
                             <span class="text-white group-hover:text-gray-900 font-bold">{{ $showtime->start_time->format('H:i') }}</span>
                             <span class="text-gray-500 group-hover:text-gray-900/70 text-xs">{{ $showtime->studio->name }}</span>
                             <span class="text-amber-400 group-hover:text-gray-900/80 text-xs font-medium mt-1">Rp {{ number_format($showtime->price, 0, ',', '.') }}</span>
                         </a>
+                        @endif
                         @endforeach
                     </div>
                 </div>
