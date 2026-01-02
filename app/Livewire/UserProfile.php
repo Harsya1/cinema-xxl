@@ -28,6 +28,14 @@ class UserProfile extends Component
     public string $current_password = '';
     public string $new_password = '';
     public string $new_password_confirmation = '';
+    
+    // QR Modal state
+    public bool $showQrModal = false;
+    public ?string $qrBookingCode = null;
+    public ?string $qrSeatNumber = null;
+    public ?string $qrMovieTitle = null;
+    public ?string $qrShowtime = null;
+    public ?string $qrStudio = null;
 
     public function mount(): void
     {
@@ -147,6 +155,66 @@ class UserProfile extends Component
             $watchlist->delete();
             $this->dispatch('notify', type: 'success', message: 'Removed from watchlist.');
         }
+    }
+
+    /**
+     * Open QR code modal for a booking.
+     */
+    public function openQrModal(string $bookingCode): void
+    {
+        $booking = Booking::with(['showtime.studio'])
+            ->where('booking_code', $bookingCode)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if ($booking) {
+            $this->qrBookingCode = $booking->booking_code;
+            $this->qrSeatNumber = $booking->seat_number;
+            $this->qrShowtime = $booking->showtime->start_time->format('d M Y, H:i');
+            $this->qrMovieTitle = $this->getMovieTitle($booking->showtime->tmdb_movie_id);
+            $this->qrStudio = $booking->showtime->studio->name ?? '-';
+            $this->showQrModal = true;
+        }
+    }
+
+    /**
+     * Close QR modal.
+     */
+    public function closeQrModal(): void
+    {
+        $this->showQrModal = false;
+        $this->qrBookingCode = null;
+        $this->qrSeatNumber = null;
+        $this->qrMovieTitle = null;
+        $this->qrShowtime = null;
+        $this->qrStudio = null;
+    }
+
+    /**
+     * Get movie title from TMDb.
+     */
+    private function getMovieTitle(int $tmdbId): string
+    {
+        $apiKey = config('services.tmdb.api_key');
+        
+        if (!$apiKey) {
+            return 'Movie';
+        }
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::get(
+                "https://api.themoviedb.org/3/movie/{$tmdbId}",
+                ['api_key' => $apiKey]
+            );
+
+            if ($response->successful()) {
+                return $response->json()['title'] ?? 'Movie';
+            }
+        } catch (\Exception $e) {
+            // Fallback
+        }
+
+        return 'Movie';
     }
 
     public function render()

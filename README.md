@@ -1,6 +1,6 @@
 # Cinema XXL
 
-A comprehensive cinema management system built with Laravel 12, featuring ticket booking, food and beverage ordering, studio management, and staff operations.
+A comprehensive cinema management system built with Laravel 12, featuring ticket booking with QR code e-tickets, food and beverage ordering with POS, studio management, and staff operations.
 
 ## Table of Contents
 
@@ -13,26 +13,43 @@ A comprehensive cinema management system built with Laravel 12, featuring ticket
 - [User Roles](#user-roles)
 - [Default Credentials](#default-credentials)
 - [API Integration](#api-integration)
+- [Screenshots](#screenshots)
 - [License](#license)
 
 ## Features
 
-### Cinema Operations
-- **Studio Management**: Support for Regular, 3D, and Premier studio types with configurable seating capacity
-- **Showtime Scheduling**: Create and manage movie schedules with TMDb integration
-- **Ticket Booking**: Complete booking system with seat selection and multiple payment methods
-- **Cleaning Task Management**: Track and assign cleaning tasks after each show
+### Public Website
+- **Movie Browsing**: Browse now playing, coming soon, and popular movies
+- **Movie Details**: View movie information, trailers, cast, and reviews
+- **Seat Selection**: Interactive seat map for ticket booking
+- **User Registration**: Create account with email verification
+- **User Profile**: View booking history, watchlist, and account settings
+
+### Ticket Booking
+- **Real-time Seat Selection**: Interactive seat map with availability status
+- **Multiple Seats**: Book up to 6 seats per transaction
+- **Payment Options**: Cash and QRIS payment methods
+- **QR Code E-Tickets**: Downloadable PDF tickets with QR codes
+- **Booking History**: View active and past bookings in user profile
 
 ### Food and Beverage
 - **Menu Management**: Categorized menu items (Snacks, Drinks, Combos, Meals)
 - **Inventory Control**: Track stock levels with low-stock alerts
-- **Recipe Management**: Define ingredients for each menu item
-- **Order Processing**: POS-ready order management system
+- **Recipe Management**: Define ingredients for each menu item with automatic stock deduction
+- **POS System**: Complete point-of-sale for FnB staff with order management
+- **Inventory Dashboard**: Real-time stock monitoring and restocking
+
+### Cinema Operations
+- **Studio Management**: Support for Regular, 3D, and Premier studio types with configurable seating
+- **Showtime Scheduling**: Create and manage movie schedules with TMDb integration
+- **Cleaning Task Management**: Track and assign cleaning tasks after each show
+- **Staff Management**: Role-based access for different staff types
 
 ### Administration
 - **User Management**: Role-based access control with 6 user roles
 - **Audit Logging**: Track system changes and user activities
 - **Dashboard Analytics**: Real-time statistics and reports
+- **Resource Management**: Full CRUD for all system entities
 
 ## Tech Stack
 
@@ -42,7 +59,9 @@ A comprehensive cinema management system built with Laravel 12, featuring ticket
 | PHP Version | 8.4 |
 | Database | MySQL 8.0 |
 | Admin Panel | FilamentPHP 3.x |
-| Frontend | Livewire 3.x, Tailwind CSS 4.x |
+| Frontend | Livewire 3.x, Alpine.js, Tailwind CSS 4.x |
+| PDF Generation | DomPDF |
+| QR Code | Simple QRCode (via api.qrserver.com) |
 | Build Tool | Vite 7.x |
 | Containerization | Docker |
 
@@ -287,3 +306,21 @@ docker exec cinema-app php artisan migrate:fresh --seed
 ## License
 
 This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Screenshots
+
+### Public Website
+- Home page with now playing movies
+- Movie details with showtime selection
+- Interactive seat selection
+- User profile with booking history
+
+### Admin Panel
+- Dashboard with analytics
+- Studio management
+- Showtime scheduling
+- FnB POS system
+
+### E-Ticket
+- PDF ticket with QR code
+- QR modal in user profile
