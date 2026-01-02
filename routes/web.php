@@ -10,6 +10,7 @@ use App\Livewire\Auth\Register;
 use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Pos\FnbPos;
+use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +34,10 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     // User Profile
     Route::get('/profile', UserProfile::class)->name('profile');
+    
+    // Ticket Download & View
+    Route::get('/ticket/{booking_code}/download', [TicketController::class, 'download'])->name('ticket.download');
+    Route::get('/ticket/{booking_code}/view', [TicketController::class, 'view'])->name('ticket.view');
     
     Route::post('/logout', function () {
         Auth::guard('web')->logout();

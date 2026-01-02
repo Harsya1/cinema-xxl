@@ -136,9 +136,21 @@
                                     </div>
                                 </div>
 
-                                {{-- QR Code Button --}}
-                                <div class="flex items-center">
-                                    <button class="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-4 py-2 rounded-lg transition-colors">
+                                {{-- Action Buttons --}}
+                                <div class="flex items-center gap-2">
+                                    {{-- Download PDF Button --}}
+                                    <a href="{{ route('ticket.download', $booking->booking_code) }}" class="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded-lg transition-colors" title="Download PDF">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                        <span class="hidden sm:inline">PDF</span>
+                                    </a>
+                                    
+                                    {{-- Show QR Button --}}
+                                    <button 
+                                        wire:click="openQrModal('{{ $booking->booking_code }}')"
+                                        class="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-4 py-2 rounded-lg transition-colors"
+                                    >
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
                                         </svg>
@@ -442,4 +454,109 @@
             
         </div>
     </div>
+
+    {{-- QR Code Modal --}}
+    @if($showQrModal && $qrBookingCode)
+    <div 
+        class="fixed inset-0 z-50 overflow-y-auto"
+        x-data="{ open: true }"
+        x-init="document.body.classList.add('overflow-hidden')"
+        x-on:keydown.escape.window="$wire.closeQrModal(); document.body.classList.remove('overflow-hidden')"
+        @click.self="$wire.closeQrModal(); document.body.classList.remove('overflow-hidden')"
+    >
+        {{-- Backdrop --}}
+        <div 
+            class="fixed inset-0 bg-black/80 backdrop-blur-sm"
+            wire:click="closeQrModal"
+            x-on:click="document.body.classList.remove('overflow-hidden')"
+        ></div>
+        
+        {{-- Modal Content --}}
+        <div class="relative min-h-screen flex items-center justify-center p-4">
+            <div 
+                class="relative bg-gray-800 rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden"
+                x-on:click.stop
+                style="box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.25);"
+            >
+                {{-- Close Button --}}
+                <button 
+                    wire:click="closeQrModal"
+                    x-on:click="document.body.classList.remove('overflow-hidden')"
+                    class="absolute top-3 right-3 text-gray-900/70 hover:text-gray-900 transition-colors z-10"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+                
+                {{-- Header --}}
+                <div class="bg-gradient-to-r from-amber-500 to-yellow-400 px-6 py-5 text-center">
+                    <div class="flex items-center justify-center gap-2 mb-1">
+                        <svg class="w-5 h-5 text-gray-900" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0v12h8V4H6z"/>
+                        </svg>
+                        <h3 class="text-lg font-bold text-gray-900">E-TICKET</h3>
+                    </div>
+                    <p class="text-gray-800/80 text-xs">Scan QR code at entrance gate</p>
+                </div>
+                
+                {{-- Body --}}
+                <div class="p-5">
+                    {{-- Movie Info Card --}}
+                    <div class="bg-gray-900/50 rounded-xl p-4 mb-4">
+                        <h4 class="text-lg font-bold text-white text-center">{{ $qrMovieTitle ?? 'Movie' }}</h4>
+                        <div class="flex items-center justify-center gap-2 mt-2 text-gray-400 text-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <span>{{ $qrShowtime ?? '' }}</span>
+                        </div>
+                    </div>
+                    
+                    {{-- QR Code Section --}}
+                    <div class="flex justify-center mb-4">
+                        <div class="bg-white rounded-xl p-3 shadow-lg">
+                            <img 
+                                src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ urlencode($qrBookingCode ?? '') }}"
+                                alt="QR Code"
+                                class="w-40 h-40"
+                                loading="eager"
+                            >
+                        </div>
+                    </div>
+                    
+                    {{-- Seat & Booking Info --}}
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        {{-- Seat Number --}}
+                        <div class="bg-gray-900/50 rounded-xl p-3 text-center">
+                            <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Seat</p>
+                            <p class="text-2xl font-bold text-amber-400">{{ $qrSeatNumber ?? '-' }}</p>
+                        </div>
+                        {{-- Studio --}}
+                        <div class="bg-gray-900/50 rounded-xl p-3 text-center">
+                            <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Studio</p>
+                            <p class="text-2xl font-bold text-white">{{ $qrStudio ?? '-' }}</p>
+                        </div>
+                    </div>
+                    
+                    {{-- Booking Code --}}
+                    <div class="bg-gradient-to-r from-gray-900 to-gray-900/80 rounded-xl p-3 text-center border border-gray-700">
+                        <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Booking Code</p>
+                        <p class="font-mono text-amber-400 font-bold tracking-wide text-sm">{{ $qrBookingCode }}</p>
+                    </div>
+                </div>
+                
+                {{-- Footer --}}
+                <div class="bg-gray-900/80 px-5 py-3 border-t border-gray-700">
+                    <div class="flex items-center justify-center gap-2 text-gray-500 text-xs">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span>Arrive 15 minutes before showtime</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
