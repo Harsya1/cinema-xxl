@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Enums\CleaningStatus;
 use App\Filament\Resources\CleaningTaskResource\Pages;
 use App\Models\CleaningTask;
-use App\Models\Studio;
 use App\Models\User;
 use App\Enums\UserRole;
 use Filament\Forms;
@@ -23,6 +22,10 @@ class CleaningTaskResource extends Resource
     protected static ?int $navigationSort = 5;
     protected static ?string $recordTitleAttribute = 'id';
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['studio', 'cleaner']);
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -31,22 +34,14 @@ class CleaningTaskResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('studio_id')
                             ->label('Studio')
-                            ->options(Studio::pluck('name', 'id'))
+                            ->relationship('studio', 'name')
                             ->required()
                             ->searchable()
                             ->preload(),
 
-                        Forms\Components\Select::make('showtime_id')
-                            ->label('After Showtime')
-                            ->relationship('showtime', 'movie_title', fn (Builder $query) => $query->where('end_time', '<', now()->addHours(6)))
-                            ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->movie_title} - {$record->end_time->format('M j, H:i')}")
-                            ->searchable()
-                            ->preload()
-                            ->nullable(),
-
-                        Forms\Components\Select::make('assigned_to')
+                        Forms\Components\Select::make('cleaner_id')
                             ->label('Assigned To')
-                            ->options(User::where('role', UserRole::Cleaner)->pluck('name', 'id'))
+                            ->relationship('cleaner', 'name', fn (Builder $query) => $query->where('role', UserRole::Cleaner))
                             ->searchable()
                             ->preload()
                             ->nullable(),
@@ -56,6 +51,11 @@ class CleaningTaskResource extends Resource
                             ->required()
                             ->native(false)
                             ->default(CleaningStatus::Pending),
+
+                        Forms\Components\DateTimePicker::make('assigned_at')
+                            ->label('Assigned At')
+                            ->seconds(false)
+                            ->default(now()),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Completion')
@@ -79,18 +79,7 @@ class CleaningTaskResource extends Resource
                     ->sortable()
                     ->weight('bold'),
 
-                Tables\Columns\TextColumn::make('showtime.movie_title')
-                    ->label('After Movie')
-                    ->limit(25)
-                    ->placeholder('General Cleaning'),
-
-                Tables\Columns\TextColumn::make('showtime.end_time')
-                    ->label('Show Ended')
-                    ->dateTime('M j, H:i')
-                    ->sortable()
-                    ->placeholder('-'),
-
-                Tables\Columns\TextColumn::make('assignedTo.name')
+                Tables\Columns\TextColumn::make('cleaner.name')
                     ->label('Assigned To')
                     ->searchable()
                     ->placeholder('Unassigned')
@@ -99,7 +88,13 @@ class CleaningTaskResource extends Resource
 
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->color(fn (CleaningStatus $state): string => $state->color()),
+                    ->color(fn ($state): string => $state instanceof CleaningStatus ? $state->color() : 'gray'),
+
+                Tables\Columns\TextColumn::make('assigned_at')
+                    ->label('Assigned')
+                    ->dateTime('M j, H:i')
+                    ->sortable()
+                    ->placeholder('-'),
 
                 Tables\Columns\TextColumn::make('completed_at')
                     ->label('Completed')
@@ -120,9 +115,9 @@ class CleaningTaskResource extends Resource
                 Tables\Filters\SelectFilter::make('studio')
                     ->relationship('studio', 'name'),
 
-                Tables\Filters\SelectFilter::make('assigned_to')
+                Tables\Filters\SelectFilter::make('cleaner_id')
                     ->label('Assigned To')
-                    ->options(User::where('role', UserRole::Cleaner)->pluck('name', 'id')),
+                    ->relationship('cleaner', 'name'),
 
                 Tables\Filters\Filter::make('pending')
                     ->label('Pending Only')
@@ -151,9 +146,9 @@ class CleaningTaskResource extends Resource
                     ->label('Assign')
                     ->icon('heroicon-o-user-plus')
                     ->color('info')
-                    ->visible(fn (CleaningTask $record) => !$record->assigned_to && $record->status !== CleaningStatus::Completed)
+                    ->visible(fn (CleaningTask $record) => !$record->cleaner_id && $record->status !== CleaningStatus::Completed)
                     ->form([
-                        Forms\Components\Select::make('assigned_to')
+                        Forms\Components\Select::make('cleaner_id')
                             ->label('Assign To')
                             ->options(User::where('role', UserRole::Cleaner)->pluck('name', 'id'))
                             ->required(),
