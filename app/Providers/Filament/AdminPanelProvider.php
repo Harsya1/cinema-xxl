@@ -49,11 +49,16 @@ class AdminPanelProvider extends PanelProvider
                 'Administration',
             ])
             ->navigationItems([
+                NavigationItem::make('Ticket POS')
+                    ->url('/pos/ticket', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-ticket')
+                    ->group('POS System')
+                    ->sort(1),
                 NavigationItem::make('FnB POS')
                     ->url('/pos/fnb', shouldOpenInNewTab: true)
                     ->icon('heroicon-o-shopping-cart')
                     ->group('POS System')
-                    ->sort(1),
+                    ->sort(2),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

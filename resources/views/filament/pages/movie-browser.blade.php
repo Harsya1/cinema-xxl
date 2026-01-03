@@ -1,25 +1,27 @@
 <x-filament-panels::page>
-    <div class="space-y-6">
+    <div class="space-y-4">
         {{-- Search and Filter Section --}}
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-            <div class="flex flex-col md:flex-row gap-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-3">
+            <div class="flex items-end gap-3">
                 {{-- Search Input --}}
                 <div class="flex-1">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search Movies</label>
-                    <input 
-                        type="text" 
-                        wire:model.live.debounce.500ms="search" 
-                        placeholder="Search for a movie..."
-                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                    >
+                    <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Search Movies</label>
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            wire:model.live.debounce.500ms="search" 
+                            placeholder="Search..."
+                            class="w-full pl-9 pr-3 py-2 text-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                        >
+                    </div>
                 </div>
                 
                 {{-- Category Filter --}}
-                <div class="w-full md:w-48">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
+                <div class="w-44">
+                    <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Category</label>
                     <select 
                         wire:model.live="category"
-                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                        class="w-full py-2 text-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500"
                         {{ !empty($search) ? 'disabled' : '' }}
                     >
                         <option value="now_playing">Now Playing</option>
@@ -30,44 +32,45 @@
             </div>
         </div>
 
-        {{-- Movies Grid --}}
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        {{-- Movies Grid - 4 columns --}}
+        <div class="grid grid-cols-4 gap-4" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));">
             @forelse($movies as $movie)
                 <div 
                     wire:click="selectMovie({{ $movie['id'] }})"
-                    class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200"
+                    class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer hover:shadow-md hover:border-primary-500 transition-all duration-200"
+                    style="max-width: 100%;"
                 >
                     {{-- Poster --}}
-                    <div class="aspect-[2/3] bg-gray-200 dark:bg-gray-700 relative">
+                    <div class="relative" style="aspect-ratio: 2/3;">
                         @if($movie['poster_path'])
                             <img 
-                                src="{{ $this->getPosterUrl($movie['poster_path']) }}" 
+                                src="{{ $this->getPosterUrl($movie['poster_path'], 'w185') }}" 
                                 alt="{{ $movie['title'] }}"
                                 class="w-full h-full object-cover"
                                 loading="lazy"
                             >
                         @else
-                            <div class="w-full h-full flex items-center justify-center">
-                                <x-heroicon-o-film class="w-12 h-12 text-gray-400" />
+                            <div class="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+                                <x-heroicon-o-film class="w-8 h-8 text-gray-400" />
                             </div>
                         @endif
                         
                         {{-- Rating Badge --}}
                         @if(isset($movie['vote_average']))
-                            <div class="absolute top-2 right-2 bg-black/70 text-white text-xs font-bold px-2 py-1 rounded-lg flex items-center gap-1">
-                                <x-heroicon-s-star class="w-3 h-3 text-yellow-400" />
+                            <div class="absolute top-1 right-1 bg-black/70 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                <x-heroicon-s-star class="w-2.5 h-2.5 text-yellow-400" />
                                 {{ number_format($movie['vote_average'], 1) }}
                             </div>
                         @endif
                     </div>
                     
                     {{-- Info --}}
-                    <div class="p-3">
-                        <h3 class="font-semibold text-gray-900 dark:text-white text-sm line-clamp-2">
+                    <div class="p-2">
+                        <h3 class="font-medium text-gray-900 dark:text-white text-xs line-clamp-1">
                             {{ $movie['title'] }}
                         </h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            {{ isset($movie['release_date']) ? \Carbon\Carbon::parse($movie['release_date'])->format('M d, Y') : 'TBA' }}
+                        <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">
+                            {{ isset($movie['release_date']) ? \Carbon\Carbon::parse($movie['release_date'])->format('Y') : 'TBA' }}
                         </p>
                     </div>
                 </div>

@@ -28,7 +28,7 @@
         /* Ticket Container */
         .ticket-container {
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 25px;
             page-break-inside: avoid;
         }
 
@@ -38,24 +38,27 @@
             border-collapse: collapse;
             border: 2px solid #1a1a1a;
             background: #fff;
+            table-layout: fixed;
         }
 
         /* Main Part - Left 75% */
         .main-part {
             width: 75%;
             padding: 15px 20px;
-            border-right: 3px dashed #666;
+            border-right: 2px dashed #999;
             vertical-align: top;
             position: relative;
+            height: 140px;
         }
 
         /* Stub Part - Right 25% */
         .stub-part {
             width: 25%;
-            padding: 15px;
+            padding: 12px 10px;
             text-align: center;
             vertical-align: top;
-            background: #f8f8f8;
+            background: #fafafa;
+            height: 140px;
         }
 
         /* Header Section */
@@ -146,23 +149,22 @@
         /* QR Code Section */
         .qr-section {
             position: absolute;
-            right: 25px;
-            top: 50%;
-            transform: translateY(-50%);
+            right: 20px;
+            bottom: 15px;
             text-align: center;
         }
 
         .qr-code {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             background: #fff;
-            padding: 5px;
+            padding: 3px;
             border: 1px solid #ddd;
         }
 
         .qr-code img {
-            width: 70px;
-            height: 70px;
+            width: 64px;
+            height: 64px;
         }
 
         /* Booking Code */
@@ -202,43 +204,43 @@
         }
 
         .stub-label {
-            font-size: 8px;
+            font-size: 7px;
             color: #888;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-top: 8px;
+            margin-top: 4px;
         }
 
         .stub-value {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
             color: #1a1a1a;
         }
 
         .stub-seat {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
             color: #d97706;
-            margin: 10px 0;
+            margin: 5px 0;
         }
 
         .stub-movie {
-            font-size: 10px;
+            font-size: 9px;
             font-weight: bold;
             color: #1a1a1a;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             line-height: 1.2;
         }
 
         .stub-qr {
-            margin: 10px auto;
-            width: 60px;
-            height: 60px;
+            margin: 5px auto;
+            width: 50px;
+            height: 50px;
         }
 
         .stub-qr img {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
         }
 
         /* Footer */
@@ -269,14 +271,9 @@
             padding-top: 10px;
         }
 
-        /* Scissors Icon */
+        /* Scissors Icon - Hidden for cleaner look */
         .scissors {
-            position: absolute;
-            right: -8px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 14px;
-            color: #666;
+            display: none;
         }
     </style>
 </head>

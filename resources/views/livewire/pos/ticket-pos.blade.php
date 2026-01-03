@@ -70,8 +70,10 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
             @forelse($this->filteredMovies as $movie)
                 <button 
-                    wire:click="selectMovie({{ $movie['id'] }}, '{{ addslashes($movie['title']) }}', '{{ $movie['poster_path'] ?? '' }}')"
-                    class="group relative bg-gray-800 rounded-xl overflow-hidden hover:ring-2 hover:ring-amber-500 transition-all duration-200 transform hover:scale-105"
+                    wire:key="movie-{{ $movie['id'] }}"
+                    wire:click="selectMovie({{ $movie['id'] }}, {{ json_encode($movie['title']) }}, {{ json_encode($movie['poster_path'] ?? '') }})"
+                    type="button"
+                    class="group relative bg-gray-800 rounded-xl overflow-hidden hover:ring-2 hover:ring-amber-500 transition-all duration-200 transform hover:scale-105 text-left"
                 >
                     {{-- Poster --}}
                     @if(!empty($movie['poster_path']))
