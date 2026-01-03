@@ -20,6 +20,7 @@ class Booking extends Model
         'status',
         'payment_method',
         'booking_time',
+        'total_price',
     ];
 
     protected function casts(): array
