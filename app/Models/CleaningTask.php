@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CleaningStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,6 +24,7 @@ class CleaningTask extends Model
         return [
             'assigned_at' => 'datetime',
             'completed_at' => 'datetime',
+            'status' => CleaningStatus::class,
         ];
     }
 
