@@ -21,6 +21,12 @@ class BookingResource extends Resource
     protected static ?int $navigationSort = 3;
     protected static ?string $recordTitleAttribute = 'booking_code';
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->with(['user', 'showtime.studio', 'cashier']);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -115,7 +121,7 @@ class BookingResource extends Resource
 
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->color(fn (BookingStatus $state): string => $state->color()),
+                    ->color(fn ($state): string => $state instanceof BookingStatus ? $state->color() : 'gray'),
 
                 Tables\Columns\TextColumn::make('payment_method')
                     ->label('Payment')
@@ -182,7 +188,8 @@ class BookingResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'desc')
+            ->defaultPaginationPageOption(25);
     }
 
     public static function getRelations(): array
@@ -203,7 +210,9 @@ class BookingResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('status', BookingStatus::Booked)->count();
+        return cache()->remember('booking_pending_count', 60, function () {
+            return (string) static::getModel()::where('status', BookingStatus::Booked)->count();
+        });
     }
 
     public static function getNavigationBadgeColor(): string|array|null

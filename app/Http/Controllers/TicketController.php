@@ -90,6 +90,52 @@ class TicketController extends Controller
     }
 
     /**
+     * Print stub ticket (landscape with tear-off) - For POS/Cashier.
+     */
+    public function printStub(string $booking_code)
+    {
+        // Find booking with relationships
+        $booking = Booking::with(['showtime.studio', 'user', 'cashier'])
+            ->where('booking_code', $booking_code)
+            ->firstOrFail();
+
+        // Authorization: Only cashiers/admins can print stubs
+        $user = Auth::user();
+        if (!in_array($user->role->value ?? $user->role, ['admin', 'manager', 'cashier'])) {
+            abort(403, 'Only staff can print ticket stubs.');
+        }
+
+        // Get all bookings with same group code (for multiple tickets)
+        $groupCode = substr($booking_code, 0, strrpos($booking_code, '-'));
+        $allBookings = Booking::with(['showtime.studio'])
+            ->where('booking_code', 'like', $groupCode . '%')
+            ->orderBy('booking_code')
+            ->get();
+
+        // Get movie details
+        $movieData = $this->getMovieData($booking->showtime->tmdb_movie_id);
+
+        // Prepare data for PDF
+        $data = [
+            'bookings' => $allBookings,
+            'showtime' => $booking->showtime,
+            'studio' => $booking->showtime->studio,
+            'movieTitle' => $movieData['title'] ?? 'Movie',
+            'groupCode' => $groupCode,
+            'printedAt' => now(),
+            'cashierName' => $user->name,
+        ];
+
+        // Generate PDF with landscape orientation
+        $pdf = Pdf::loadView('pdf.ticket-stub', $data);
+        
+        // A4 Landscape or custom thermal size
+        $pdf->setPaper('a4', 'landscape');
+
+        return $pdf->stream('tickets-' . $groupCode . '.pdf');
+    }
+
+    /**
      * Get movie data from TMDb API.
      */
     private function getMovieData(int $tmdbId): array

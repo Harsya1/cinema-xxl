@@ -10,6 +10,7 @@ use App\Livewire\Auth\Register;
 use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Pos\FnbPos;
+use App\Livewire\Pos\TicketPos;
 use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +49,12 @@ Route::middleware('auth')->group(function () {
 });
 
 // POS Routes (Staff Only)
-Route::middleware(['auth', 'role:fnb_staff,cashier'])->prefix('pos')->group(function () {
+Route::middleware(['auth', 'role:fnb_staff,cashier,manager,admin'])->prefix('pos')->group(function () {
     Route::get('/fnb', FnbPos::class)->name('pos.fnb');
+    Route::get('/ticket', TicketPos::class)->name('pos.ticket');
+});
+
+// Ticket Print Stub (Cashier/Admin)
+Route::middleware(['auth', 'role:cashier,manager,admin'])->group(function () {
+    Route::get('/ticket/{booking_code}/print-stub', [TicketController::class, 'printStub'])->name('ticket.print-stub');
 });

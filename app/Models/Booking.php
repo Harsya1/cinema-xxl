@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\BookingStatus;
+use App\Enums\PaymentMethod;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,12 +22,15 @@ class Booking extends Model
         'status',
         'payment_method',
         'booking_time',
+        'total_price',
     ];
 
     protected function casts(): array
     {
         return [
             'booking_time' => 'datetime',
+            'status' => BookingStatus::class,
+            'payment_method' => PaymentMethod::class,
         ];
     }
 

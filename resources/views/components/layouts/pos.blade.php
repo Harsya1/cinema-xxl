@@ -14,8 +14,8 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Livewire Styles -->
+    @livewireStyles
 
     <style>
         [x-cloak] { display: none !important; }
@@ -53,5 +53,19 @@
     {{ $slot }}
 
     @livewireScripts
+    
+    <script>
+        // Debug: Check if Livewire is loaded
+        document.addEventListener('livewire:init', () => {
+            console.log('Livewire initialized successfully');
+        });
+        
+        // Toast notification handler
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('show-toast', (data) => {
+                alert(data.message);
+            });
+        });
+    </script>
 </body>
 </html>

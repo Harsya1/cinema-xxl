@@ -21,6 +21,11 @@ class ShowtimeResource extends Resource
     protected static ?int $navigationSort = 2;
     protected static ?string $recordTitleAttribute = 'movie_title';
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['studio']);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
