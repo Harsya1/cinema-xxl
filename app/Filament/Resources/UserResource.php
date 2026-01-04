@@ -80,7 +80,7 @@ class UserResource extends Resource
 
                 Tables\Columns\TextColumn::make('role')
                     ->badge()
-                    ->color(fn (UserRole $state): string => $state->color()),
+                    ->color(fn ($state): string => $state instanceof UserRole ? $state->color() : 'gray'),
 
                 Tables\Columns\TextColumn::make('bookings_count')
                     ->label('Bookings')

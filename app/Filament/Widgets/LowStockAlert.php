@@ -2,16 +2,32 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\UserRole;
 use App\Models\InventoryItem;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Support\Facades\Auth;
 
 class LowStockAlert extends BaseWidget
 {
     protected static ?int $sort = 4;
     protected int | string | array $columnSpan = 1;
     protected static ?string $heading = 'Low Stock Alert';
+
+    /**
+     * Only Admin, Manager, and FnbStaff can see low stock alert widget.
+     */
+    public static function canView(): bool
+    {
+        $user = Auth::user();
+        
+        return $user && in_array($user->role, [
+            UserRole::Admin,
+            UserRole::Manager,
+            UserRole::FnbStaff,
+        ]);
+    }
 
     public function table(Table $table): Table
     {
