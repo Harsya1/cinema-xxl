@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -18,6 +19,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -53,12 +55,14 @@ class AdminPanelProvider extends PanelProvider
                     ->url('/pos/ticket', shouldOpenInNewTab: true)
                     ->icon('heroicon-o-ticket')
                     ->group('POS System')
-                    ->sort(1),
+                    ->sort(1)
+                    ->visible(fn (): bool => $this->canAccessTicketPos()),
                 NavigationItem::make('FnB POS')
                     ->url('/pos/fnb', shouldOpenInNewTab: true)
                     ->icon('heroicon-o-shopping-cart')
                     ->group('POS System')
-                    ->sort(2),
+                    ->sort(2)
+                    ->visible(fn (): bool => $this->canAccessFnbPos()),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -83,5 +87,33 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+
+    /**
+     * Check if current user can access Ticket POS.
+     */
+    protected function canAccessTicketPos(): bool
+    {
+        $user = Auth::user();
+        
+        return $user && in_array($user->role, [
+            UserRole::Admin,
+            UserRole::Manager,
+            UserRole::Cashier,
+        ]);
+    }
+
+    /**
+     * Check if current user can access FnB POS.
+     */
+    protected function canAccessFnbPos(): bool
+    {
+        $user = Auth::user();
+        
+        return $user && in_array($user->role, [
+            UserRole::Admin,
+            UserRole::Manager,
+            UserRole::FnbStaff,
+        ]);
     }
 }

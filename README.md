@@ -194,14 +194,45 @@ TMDB_API_KEY=your_api_key_here
 
 ## User Roles
 
+The system implements comprehensive Role-Based Access Control (RBAC) using Laravel Policies.
+
 | Role | Access Level | Description |
 |------|-------------|-------------|
-| Admin | Full | Complete system access |
-| Manager | High | Operations and reporting |
-| Cashier | Medium | Ticket sales and bookings |
-| FnB Staff | Medium | Food and beverage operations |
-| Cleaner | Low | Cleaning task management |
-| User | Basic | Customer account |
+| Admin | Full | Complete system access, all CRUD operations |
+| Manager | High | Read access to all resources, operations oversight |
+| Cashier | Medium | Ticket POS, booking management |
+| FnB Staff | Medium | FnB POS, menu and inventory management |
+| Cleaner | Low | View and update assigned cleaning tasks |
+| User | Basic | Customer account, public website only |
+
+### Access Control Matrix
+
+| Resource | Admin | Manager | Cashier | FnB Staff | Cleaner |
+|----------|-------|---------|---------|-----------|---------|
+| Showtimes | Full | Read | Read | ❌ | ❌ |
+| Studios | Full | Read | Read | ❌ | Read |
+| Bookings | Full | Read | Create/Update | ❌ | ❌ |
+| Cleaning Tasks | Full | Read | ❌ | ❌ | Update Own |
+| Menu Items | Full | Read | ❌ | Full | ❌ |
+| FnB Orders | Full | Read | ❌ | Full | ❌ |
+| Inventory | Full | Read | ❌ | Full | ❌ |
+| Users | Full | Read | ❌ | ❌ | ❌ |
+
+### POS Access
+
+| POS System | Admin | Manager | Cashier | FnB Staff | Cleaner |
+|------------|-------|---------|---------|-----------|---------|
+| Ticket POS | ✅ | ✅ | ✅ | ❌ | ❌ |
+| FnB POS | ✅ | ✅ | ❌ | ✅ | ❌ |
+
+### Dashboard Widgets
+
+| Widget | Admin | Manager | Cashier | FnB Staff | Cleaner |
+|--------|-------|---------|---------|-----------|---------|
+| Stats Overview | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Today's Showtimes | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Latest Bookings | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Low Stock Alert | ✅ | ✅ | ❌ | ✅ | ❌ |
 
 ## Default Credentials
 
@@ -253,14 +284,36 @@ $tmdb->getUpcoming($page);
 cinema-xxl/
 ├── app/
 │   ├── Enums/              # Application enumerations
+│   │   ├── BookingStatus.php
+│   │   ├── CleaningStatus.php
+│   │   ├── MenuCategory.php
+│   │   ├── PaymentMethod.php
+│   │   ├── StudioType.php
+│   │   └── UserRole.php
 │   ├── Filament/           # Admin panel resources
 │   │   ├── Pages/          # Custom pages
 │   │   ├── Resources/      # CRUD resources
 │   │   └── Widgets/        # Dashboard widgets
 │   ├── Http/Controllers/   # HTTP controllers
+│   ├── Livewire/           # Livewire components
+│   │   └── Pos/            # POS systems
+│   │       ├── TicketPos.php
+│   │       └── FnbPos.php
 │   ├── Models/             # Eloquent models
+│   ├── Policies/           # Authorization policies
+│   │   ├── Traits/
+│   │   │   └── ChecksUserRole.php
+│   │   ├── BookingPolicy.php
+│   │   ├── CleaningTaskPolicy.php
+│   │   ├── FnbOrderPolicy.php
+│   │   ├── InventoryItemPolicy.php
+│   │   ├── MenuItemPolicy.php
+│   │   ├── ShowtimePolicy.php
+│   │   ├── StudioPolicy.php
+│   │   └── UserPolicy.php
 │   ├── Providers/          # Service providers
 │   └── Services/           # Business logic services
+│       └── TmdbService.php
 ├── database/
 │   ├── factories/          # Model factories
 │   ├── migrations/         # Database migrations
@@ -269,6 +322,10 @@ cinema-xxl/
 │   ├── css/                # Stylesheets
 │   ├── js/                 # JavaScript files
 │   └── views/              # Blade templates
+│       ├── components/     # Blade components
+│       ├── layouts/        # Layout templates
+│       ├── livewire/       # Livewire views
+│       └── pdf/            # PDF templates
 ├── routes/                 # Application routes
 ├── docker-compose.yml      # Docker configuration
 ├── Dockerfile              # PHP container definition
@@ -319,8 +376,31 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - Dashboard with analytics
 - Studio management
 - Showtime scheduling
+- Ticket POS system
 - FnB POS system
 
 ### E-Ticket
 - PDF ticket with QR code
 - QR modal in user profile
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## Authors
+
+- **Cinema XXL Team**
+
+## Acknowledgments
+
+- [Laravel](https://laravel.com/)
+- [FilamentPHP](https://filamentphp.com/)
+- [Livewire](https://livewire.laravel.com/)
+- [The Movie Database (TMDb)](https://www.themoviedb.org/)
+- [Tailwind CSS](https://tailwindcss.com/)

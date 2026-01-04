@@ -3,16 +3,32 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\BookingStatus;
+use App\Enums\UserRole;
 use App\Models\Booking;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Support\Facades\Auth;
 
 class LatestBookings extends BaseWidget
 {
     protected static ?int $sort = 3;
     protected int | string | array $columnSpan = 1;
     protected static ?string $heading = 'Latest Bookings';
+
+    /**
+     * Only Admin, Manager, and Cashier can see latest bookings widget.
+     */
+    public static function canView(): bool
+    {
+        $user = Auth::user();
+        
+        return $user && in_array($user->role, [
+            UserRole::Admin,
+            UserRole::Manager,
+            UserRole::Cashier,
+        ]);
+    }
 
     public function table(Table $table): Table
     {
