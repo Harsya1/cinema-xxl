@@ -3,6 +3,7 @@
 namespace App\Livewire\Pos;
 
 use App\Enums\BookingStatus;
+use App\Enums\UserRole;
 use App\Models\Booking;
 use App\Models\Showtime;
 use App\Services\TmdbService;
@@ -22,6 +23,23 @@ class TicketPos extends Component
 {
     // Search
     public string $search = '';
+
+    /**
+     * Check if current user can access Ticket POS.
+     * Allowed: Admin, Manager (read), Cashier
+     */
+    public function mount(): void
+    {
+        $user = Auth::user();
+        
+        if (!$user || !in_array($user->role, [
+            UserRole::Admin,
+            UserRole::Manager,
+            UserRole::Cashier,
+        ])) {
+            abort(403, 'You do not have permission to access Ticket POS.');
+        }
+    }
 
     // Modal States
     public bool $showShowtimeModal = false;

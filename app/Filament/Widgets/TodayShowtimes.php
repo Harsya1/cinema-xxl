@@ -2,16 +2,32 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\UserRole;
 use App\Models\Showtime;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Support\Facades\Auth;
 
 class TodayShowtimes extends BaseWidget
 {
     protected static ?int $sort = 2;
     protected int | string | array $columnSpan = 'full';
     protected static ?string $heading = 'Today\'s Shows';
+
+    /**
+     * Only Admin, Manager, and Cashier can see today's showtimes widget.
+     */
+    public static function canView(): bool
+    {
+        $user = Auth::user();
+        
+        return $user && in_array($user->role, [
+            UserRole::Admin,
+            UserRole::Manager,
+            UserRole::Cashier,
+        ]);
+    }
 
     public function table(Table $table): Table
     {

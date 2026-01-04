@@ -4,16 +4,31 @@ namespace App\Filament\Widgets;
 
 use App\Enums\BookingStatus;
 use App\Enums\CleaningStatus;
+use App\Enums\UserRole;
 use App\Models\Booking;
 use App\Models\FnbOrder;
 use App\Models\Showtime;
 use App\Models\CleaningTask;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Auth;
 
 class StatsOverview extends BaseWidget
 {
     protected static ?int $sort = 1;
+
+    /**
+     * Only Admin and Manager can see the stats overview widget.
+     */
+    public static function canView(): bool
+    {
+        $user = Auth::user();
+        
+        return $user && in_array($user->role, [
+            UserRole::Admin,
+            UserRole::Manager,
+        ]);
+    }
 
     protected function getStats(): array
     {

@@ -4,6 +4,7 @@ namespace App\Livewire\Pos;
 
 use App\Enums\BookingStatus;
 use App\Enums\PaymentMethod;
+use App\Enums\UserRole;
 use App\Models\FnbOrder;
 use App\Models\FnbOrderDetail;
 use App\Models\MenuItem;
@@ -19,6 +20,22 @@ use Livewire\Component;
 #[Title('FnB POS - Cinema XXL')]
 class FnbPos extends Component
 {
+    /**
+     * Authorization check - only Admin, Manager, FnbStaff can access FnB POS.
+     */
+    public function mount(): void
+    {
+        $user = Auth::user();
+
+        if (!$user || !in_array($user->role, [
+            UserRole::Admin,
+            UserRole::Manager,
+            UserRole::FnbStaff,
+        ])) {
+            abort(403, 'Unauthorized access to FnB POS.');
+        }
+    }
+
     // Search & Filters
     public string $search = '';
     public string $activeCategory = 'all';
