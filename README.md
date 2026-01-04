@@ -99,7 +99,7 @@ DB_HOST=db
 DB_PORT=3306
 DB_DATABASE=cinema_db
 DB_USERNAME=root
-DB_PASSWORD=aura1101
+DB_PASSWORD=yourpassword
 
 TMDB_API_KEY=your_tmdb_api_key_here
 ```
